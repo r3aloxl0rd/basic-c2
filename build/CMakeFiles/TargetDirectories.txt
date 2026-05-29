@@ -1,4 +1,0 @@
-/home/oxl0rd/Documents/cpp/C2 PROJECT/build/CMakeFiles/server.dir
-/home/oxl0rd/Documents/cpp/C2 PROJECT/build/CMakeFiles/client.dir
-/home/oxl0rd/Documents/cpp/C2 PROJECT/build/CMakeFiles/edit_cache.dir
-/home/oxl0rd/Documents/cpp/C2 PROJECT/build/CMakeFiles/rebuild_cache.dir

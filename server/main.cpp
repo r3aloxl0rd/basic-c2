@@ -15,6 +15,7 @@
 #include <unistd.h>
 #include <unordered_set>
 #include <cstdio>
+#include "utils.h"
 
 using namespace std;
 
@@ -70,67 +71,6 @@ int server_setup(int port)
     cout << "[server] listening on " << port << endl;
 
     return listenfd;
-}
-
-int send_all(int fd, const string& msg)
-{
-    size_t bytesSent{};
-    uint32_t len = htonl(msg.size());
-
-    int sent = send(fd, &len, sizeof(len), 0);
-
-    if (sent == -1)
-    {
-        cout << "[server] Problem Sending." << endl;
-        return -1;
-    }
-
-    while (bytesSent < msg.size())
-    {
-        sent = send(fd, msg.data() + bytesSent, msg.size() - bytesSent, 0);
-
-        if (sent == -1)
-        {
-            cout << "[server] Problem Sending." << endl;
-            return -1;
-        }
-
-        bytesSent += sent;
-    }
-    
-    return bytesSent;
-}
-
-string recv_all(int fd)
-{
-    uint32_t len{};
-    int rd = read(fd, &len, 4);
-    len = ntohl(len);
-
-    if (rd == -1)
-    {
-        return "";
-    }
-
-    size_t bytesRead{};
-    string str(len, '\0');
-
-    while (bytesRead < len)
-    {
-        int reading = recv(fd, str.data()+bytesRead, len-bytesRead, 0);
-        if (reading == -1)
-        {
-            return "";
-        }
-        else if (reading == 0)
-        {
-            cout << "[server] Session Exited." << endl;
-            break;
-        }
-        bytesRead += reading;
-    }
-
-    return str;
 }
 
 void main_handler(atomic<bool>& running)

@@ -1,9 +1,10 @@
 cmake_minimum_required(VERSION 3.20)
-project(C2)
+project(C2-basic)
 set(CMAKE_CXX_STANDARD 17)
 
 add_executable(server
     server/main.cpp
+    server/server.cpp
     shared/utils.cpp
     shared/crypto.cpp
 )
@@ -18,7 +19,7 @@ find_package(Threads REQUIRED)
 target_link_libraries(server PRIVATE Threads::Threads)
 target_link_libraries(client PRIVATE Threads::Threads)
 
-target_include_directories(server PRIVATE ${CMAKE_SOURCE_DIR}/shared)
+target_include_directories(server PRIVATE ${CMAKE_SOURCE_DIR}/shared ${CMAKE_SOURCE_DIR}/server)
 target_include_directories(client PRIVATE ${CMAKE_SOURCE_DIR}/shared)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)

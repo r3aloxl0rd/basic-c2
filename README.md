@@ -1,4 +1,4 @@
-# c2-basic — Minimal TCP Client/Server in C++
+# basic-c2 — Minimal TCP Client/Server in C++
 
 A minimal pull-based TCP client/server implementation built from scratch in C++. Built as a systems programming portfolio project, targeting Linux.
 

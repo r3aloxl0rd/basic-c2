@@ -35,7 +35,7 @@ First, you start the server with a (non-used) port (if none is provided, the pro
 ```bash
 ./server 1234
 ```
-This ensures that the server is listening on that port. It'll accept any incoming connection (keep in mind this is a demo tool; so this won't work over the Internet).
+This ensures that the server is listening on that port (as for which interface it's listening on, it's utilizing a wildcard address). It'll accept any incoming connection (keep in mind this is a demo tool; so this won't work over the Internet).
 
 Then start the client with both the server IP as well as its listening port (if none are provided, the program will ask you for them interactively). For example:
 ```bash

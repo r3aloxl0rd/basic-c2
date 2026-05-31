@@ -1,14 +1,9 @@
-#include <cstdint>
 #include <cstdio>
 #include <iostream>
 #include <string>
 #include <cstring>
-#include <mutex>
-#include <system_error>
 #include <thread>
 #include <chrono>
-#include <memory>
-#include <cctype>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -76,7 +71,6 @@ void outputing(const string& ip, int port, atomic<bool>& running)
 {
     while (running)
     {
-        bool isNewIP = false;
         int connfd = connect_to_server(ip, port);
 
         if (connfd == -1)
@@ -124,16 +118,40 @@ void outputing(const string& ip, int port, atomic<bool>& running)
     }
 }
 
-int main()
+int main(int argc, char* argv[])
 {
+    int port{};
+    string ip{};
+
+    if (argc > 2)
+    {
+        try {
+            port = stoi(argv[2]);
+            ip = argv[1];
+        } catch (const invalid_argument& problem) {
+            cout << problem.what() << endl;
+            return -1;
+        } catch (const out_of_range& problem) {
+            cout << problem.what() << endl;
+            return -1;
+        }
+    }
+    else
+    {
+        cout << "No IP/Port Arguments Passed (e.g., ./client 192.168.1.2 1234). Launching Interactive Mode." << endl;
+        cout << "Provide Server IP: ";
+        cin >> ip;
+        cin.ignore();
+        cout << "Provide Port: ";
+        cin >> port;
+        cin.ignore();
+    }
+
     atomic<bool> running = true;
 
     char hostname[256];
     gethostname(hostname, sizeof(hostname));
     clientHostname = hostname;
-
-    string ip = "127.0.0.1";
-    int port = 6666;
 
     thread outputThread(outputing, ref(ip), port, ref(running));
 

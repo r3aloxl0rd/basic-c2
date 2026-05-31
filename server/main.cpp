@@ -1,20 +1,18 @@
+#include <cerrno>
 #include <csignal>
-#include <cstdint>
 #include <iostream>
+#include <stdexcept>
 #include <string>
-#include <cstring>
 #include <mutex>
 #include <queue>
 #include <thread>
 #include <chrono>
-#include <memory>
 #include <atomic>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <unordered_set>
-#include <cstdio>
 #include "utils.h"
 
 using namespace std;
@@ -126,7 +124,7 @@ void main_handler(atomic<bool>& running, int port)
         }
         else if (command == "exit")
         {
-            cout << "Exiting." << endl;
+            cout << "Exiting..." << endl;
             running = false;
         }
         else
@@ -146,6 +144,10 @@ int connection_handler(int fd, atomic<bool>& running)
     sockaddr_in clientAddr;
     socklen_t len = sizeof(clientAddr);
 
+    timeval timer{};
+    timer.tv_sec = 10;
+    setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &timer, sizeof(timer));
+
     while (running)
     {   
         string cmd{};
@@ -156,9 +158,22 @@ int connection_handler(int fd, atomic<bool>& running)
         
         if (connfd == -1)
         {
-            cout << "\n[server] Connection Error. Trying Again." << endl;
-            this_thread::sleep_for(chrono::seconds(2));
-            continue;
+            if (errno == EWOULDBLOCK || errno == EAGAIN)
+            {
+                if (!running) continue;
+                else
+                {
+                    cout << "\n[server] Connection Timeout. Trying Again." << endl;
+                    cout << "\r" << "\n[c2-tool] > " << flush;
+                    continue;
+                }
+            }
+            else
+            {
+                cout << "\n[server] Connection Error. Trying Again." << endl;
+                this_thread::sleep_for(chrono::seconds(2));
+                continue;
+            }
         }
 
         char ipStr[INET_ADDRSTRLEN];
@@ -206,7 +221,8 @@ int connection_handler(int fd, atomic<bool>& running)
         }
         else
         {
-            cout << "\r" << output << "\n[c2-tool] > " << flush;
+            cout << "\r" << output << "\n" << flush;
+            cout << "[c2-tool] > " << flush;
             close(connfd);
         }
     }
@@ -215,10 +231,31 @@ int connection_handler(int fd, atomic<bool>& running)
 }
 
 
-int main()
+int main(int argc, char* argv[])
 {
-    int port = 6666;
-    server.sockfd = server_setup(6666);
+    int port{};
+
+    if (argc > 1)
+    {
+        try {
+            port = stoi(argv[1]);
+        } catch (const invalid_argument& problem) {
+            cout << problem.what() << endl;
+            return -1;
+        } catch (const out_of_range& problem) {
+            cout << problem.what() << endl;
+            return -1;
+        }
+    }
+    else
+    {
+        cout << "No Port Argument Passed (e.g., ./client 1234). Launching Interactive Mode." << endl;
+        cout << "Provide Listening Port: ";
+        cin >> port;
+        cin.ignore();
+    }
+
+    server.sockfd = server_setup(port);
 
     if (server.sockfd == -1)
     {

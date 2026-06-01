@@ -72,7 +72,7 @@ void main_handler(atomic<bool>& running, int port)
 
         else
         {
-            // this is all other commands -- presumably meant for an agent
+            // this is for all other commands -- presumably meant for an agent
             {
                 lock_guard<mutex> guard(server.deadlock);
                 server.commands.push(command);

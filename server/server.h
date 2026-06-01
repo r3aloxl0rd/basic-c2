@@ -9,7 +9,7 @@
 
 using namespace std;
 
-// this holds the variables our server needs to function properly
+// this holds the variables our server needs to function
 struct ServerState {
     int sockfd = -1;
     std::atomic<bool> running = true;

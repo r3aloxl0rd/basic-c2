@@ -81,5 +81,5 @@ string recv_all(int fd)
 
     encryptInPlace(str); // it's XOR, so running in-place encryption on already-encrypted text will decrypt!
 
-    return str; // returing the string we read to whoever's receiving
+    return str; // returning the string we read to whoever's receiving
 }

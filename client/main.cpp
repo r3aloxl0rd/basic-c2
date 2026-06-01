@@ -153,7 +153,7 @@ int main(int argc, char* argv[])
 
     atomic<bool> running = true;
 
-    // this is so that we can send out our hostname with each beacon, so the server has more clarity
+    // this is so that we can send out our hostname with each beacon, so that the server has more clarity
     char hostname[256];
     gethostname(hostname, sizeof(hostname));
     clientHostname = hostname;

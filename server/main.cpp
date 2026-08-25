@@ -29,7 +29,7 @@ void main_handler(atomic<bool>& running, int port)
             cout << endl;
             cout << "This is a C2 Server. Issue commands to binded agents." << endl;
             cout << "'status' to check previously connected agents and running." << endl;
-            cout << "'history' to check previously connected agents and running." << endl;
+            cout << "'history' to check previously sent commands." << endl;
             cout << "Type 'help' to display this menu." << endl;
             cout << "'exit' to close the program." << endl;
             cout << endl;
